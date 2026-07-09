@@ -1,0 +1,31 @@
+# Backend dependencies
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+pydantic==2.5.3
+pyyaml==6.0.1
+
+# LangChain
+langchain==0.1.4
+langchain-core==0.1.10
+langchain-community==0.0.16
+langchain-openai==0.0.5
+langchain-chroma==0.0.3
+
+# Document processing
+pymupdf==1.23.8
+python-docx==1.1.0
+
+# Vector database
+chromadb==0.4.22
+
+# Tools
+duckduckgo-search==4.1.1
+
+# Utilities
+watchdog==3.0.0
+python-dotenv==1.0.0
+httpx==0.26.0
+
+# OpenAI compatible
+openai==1.12.0

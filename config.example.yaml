@@ -1,0 +1,79 @@
+# SmartKB 配置文件示例
+# 复制此文件为 backend/config.yaml 并修改配置
+
+# 模型配置
+model:
+  # 模式: cloud(云端) 或 local(本地)
+  mode: local
+  
+  # 云端模型配置
+  cloud:
+    provider: dashscope  # dashscope 或 deepseek
+    api_key: ""  # 或设置环境变量 DASHSCOPE_API_KEY / DEEPSEEK_API_KEY
+    model_name: qwen-turbo
+  
+  # 本地模型配置 (Ollama)
+  local:
+    base_url: http://localhost:11434
+    model_name: qwen2:1.5b
+
+# LLM参数
+llm:
+  temperature: 0.7
+  top_p: 0.9
+  max_tokens: 2048
+  streaming: true
+
+# RAG配置
+rag:
+  chunk_size: 500
+  chunk_overlap: 100
+  top_k: 3
+  embedding:
+    model: text-embedding-v1
+    dimension: 1536
+
+# 文档配置
+document:
+  max_file_size_mb: 10
+  allowed_formats:
+    - pdf
+    - txt
+    - md
+
+# 数据库配置
+database:
+  sqlite_path: data/smartkb.db
+  chroma_path: data/chroma_db
+
+# 服务器配置
+server:
+  host: 0.0.0.0
+  port: 8000
+
+# 日志配置
+logging:
+  level: INFO
+  max_days: 7
+
+# Agent配置
+agent:
+  max_iterations: 10
+  verbose: true
+  knowledge_keywords:
+    - 政策
+    - 制度
+    - 规定
+    - 流程
+    - 文档
+    - 手册
+    - 指南
+    - 报销
+    - 审批
+    - 请假
+    - 入职
+    - 离职
+
+# 对话配置
+conversation:
+  max_history: 10

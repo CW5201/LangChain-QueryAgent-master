@@ -1,0 +1,57 @@
+agent:
+  max_iterations: 10
+  verbose: true
+conversation:
+  max_history: 10
+database:
+  chroma_path: data/chroma_db
+  sqlite_path: data/smartkb.db
+document:
+  allowed_formats:
+  - pdf
+  - txt
+  - md
+  max_file_size_mb: 10
+llm:
+  max_tokens: 2048
+  streaming: true
+  temperature: 0.7
+  top_p: 0.9
+logging:
+  format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  level: INFO
+  max_days: 7
+model:
+  cloud:
+    api_key: ''
+    model_name: qwen-turbo
+    provider: dashscope
+  local:
+    base_url: http://localhost:11434
+    model_name: qwen2.5:7b
+  mode: cloud
+rag:
+  chunk_overlap: 100
+  chunk_size: 500
+  embedding:
+    dimension: 1536
+    model: text-embedding-v1
+  top_k: 10
+server:
+  host: 0.0.0.0
+  port: 8000
+  workers: 1
+agent:
+  knowledge_keywords:
+    - 政策
+    - 制度
+    - 规定
+    - 流程
+    - 文档
+    - 手册
+    - 指南
+    - 报销
+    - 审批
+    - 请假
+    - 入职
+    - 离职
