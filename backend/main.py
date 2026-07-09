@@ -55,11 +55,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # 项目内部模块
-from backend.api.router import router, set_dependencies
-from backend.core.database import DatabaseManager
-from backend.core.rag_engine import RAGEngine
-from backend.core.agent_engine import AgentEngine
-from backend.core.tools import init_sample_database
+from api.router import router, set_dependencies
+from core.database import DatabaseManager
+from core.rag_engine import RAGEngine
+from core.agent_engine import AgentEngine
+from core.tools import init_sample_database
 
 # 加载.env环境变量
 load_dotenv()
@@ -260,7 +260,7 @@ if __name__ == "__main__":
     server_config = config.get("server", {})
     
     uvicorn.run(
-        "backend.main:app",
+        "main:app",
         host=server_config.get("host", "0.0.0.0"),
         port=server_config.get("port", 8000),
         reload=True    # 开发模式自动重载

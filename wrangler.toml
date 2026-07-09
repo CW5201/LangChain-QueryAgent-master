@@ -1,0 +1,16 @@
+name = "smartkb"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["python_worker"]
+
+[build]
+command = "pip install -r backend/requirements.txt"
+
+[dev]
+port = 8000
+
+[[routes]]
+pattern = "*.smartkb.pages.dev/*"
+zone_name = "smartkb.pages.dev"
+
+[vars]
+ENVIRONMENT = "production"
