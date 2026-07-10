@@ -55,11 +55,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # 项目内部模块
-from api.router import router, set_dependencies
-from core.database import DatabaseManager
-from core.rag_engine import RAGEngine
-from core.agent_engine import AgentEngine
-from core.tools import init_sample_database
+from backend.api.router import router, set_dependencies
+from backend.core.database import DatabaseManager
+from backend.core.rag_engine import RAGEngine
+from backend.core.agent_engine import AgentEngine
+from backend.core.tools import init_sample_database
 
 # 加载.env环境变量
 load_dotenv()
@@ -83,7 +83,7 @@ def load_config() -> dict:
     if os.path.exists(config_path):
         with open(config_path, "r", encoding="utf-8") as f:
             return yaml.safe_load(f)
-    
+
     return {}
 
 
@@ -174,26 +174,26 @@ async def lifespan(app: FastAPI):
     
     # 3. 初始化示例数据库
     init_sample_database()
-    logging.info("✅ 示例数据库初始化完成")
+    logging.info(" 示例数据库初始化完成")
     
     # 4. 初始化数据库管理器
     db_manager = DatabaseManager(
         sqlite_path=config.get("database", {}).get("sqlite_path", "data/smartkb.db"),
         chroma_path=config.get("database", {}).get("chroma_path", "data/chroma_db")
     )
-    logging.info("✅ SQLite + ChromaDB 初始化完成")
+    logging.info(" SQLite + ChromaDB 初始化完成")
     
     # 5. 初始化RAG引擎
     rag_engine = RAGEngine(db_manager, config)
-    logging.info("✅ RAG引擎初始化完成")
+    logging.info(" RAG引擎初始化完成")
     
     # 6. 初始化Agent引擎
     agent_engine = AgentEngine(rag_engine, db_manager, config)
-    logging.info("✅ Agent引擎初始化完成")
+    logging.info(" Agent引擎初始化完成")
     
     # 7. 注入依赖到路由模块
     set_dependencies(db_manager, rag_engine, agent_engine, config)
-    logging.info("✅ 路由模块初始化完成")
+    logging.info(" 路由模块初始化完成")
     
     logging.info("=" * 50)
     logging.info("SmartKB 服务启动完成！")
