@@ -241,7 +241,7 @@ def sidebar_navigation():
         # 系统状态显示
         st.caption("系统状态")
         health = call_api(HEALTH_ENDPOINT)
-        if health and health.get("code") == 200:
+        if health and (health.get("code") == 200 or health.get("status") == "ok"):
             st.success("● 服务运行中")
         else:
             st.error("● 服务未连接")
@@ -302,11 +302,15 @@ def page_knowledge_base():
             files = {"file": (uploaded_file.name, uploaded_file.getvalue(), uploaded_file.type)}
             result = call_api(UPLOAD_ENDPOINT, method="POST", files=files)
 
-            # 统一使用后端返回的 {code, message, data} 格式
-            if result and result.get("code") == 200:
+            # 兼容两种返回格式
+            if result and result.get("success"):
+                chunk_count = result.get("chunk_count", 0)
+                st.success(f"上传成功！文档已解析为 {chunk_count} 个分块")
+                st.rerun()
+            elif result and result.get("code") == 200:
                 chunk_count = result["data"]["chunk_count"]
                 st.success(f"上传成功！文档已解析为 {chunk_count} 个分块")
-                st.rerun()    # 刷新页面显示新文档
+                st.rerun()
             else:
                 error_msg = result.get("message", "上传失败") if result else "上传失败"
                 st.error(error_msg)
@@ -318,10 +322,15 @@ def page_knowledge_base():
 
     result = call_api(DOCUMENTS_ENDPOINT)
 
-    # 统一使用 {code, data} 格式
-    if result and result.get("code") == 200:
-        documents = result["data"]["documents"]
+    # 兼容两种返回格式
+    documents = None
+    if result:
+        if result.get("documents"):
+            documents = result["documents"]
+        elif result.get("code") == 200:
+            documents = result["data"]["documents"]
 
+    if documents is not None:
         if not documents:
             st.info("暂无文档，请上传文档")
         else:
@@ -365,15 +374,15 @@ def _render_document_card(doc: dict):
         with col4:
             if st.button("删除", key=f"del_{doc['id']}"):
                 delete_result = call_api(f"{DOCUMENTS_ENDPOINT}/{doc['id']}", method="DELETE")
-                if delete_result and delete_result.get("code") == 200:
-                    st.success(delete_result.get("message", "删除成功"))
+                if delete_result and (delete_result.get("success") or delete_result.get("code") == 200):
+                    st.success("删除成功")
                     st.rerun()
 
         # 文档预览（可折叠）
         with st.expander(f"预览: {doc['filename']}"):
             preview_result = call_api(f"{DOCUMENTS_ENDPOINT}/{doc['id']}/preview")
-            if preview_result and preview_result.get("code") == 200:
-                chunks = preview_result["data"].get("chunks", [])
+            if preview_result:
+                chunks = preview_result.get("chunks", preview_result.get("data", {}).get("chunks", []))
                 for i, chunk in enumerate(chunks[:3], 1):
                     st.markdown(f"**分块 {i}:**")
                     st.text_area(f"分块{i}", chunk, height=100, key=f"preview_{doc['id']}_{i}", disabled=True, label_visibility="collapsed")
@@ -509,8 +518,9 @@ def _handle_user_input():
                     },
                 )
 
-            if api_response and api_response.get("code") == 200:
-                _handle_chat_success(api_response["data"], message_placeholder)
+            if api_response and (api_response.get("answer") or api_response.get("code") == 200):
+                data = api_response if api_response.get("answer") else api_response["data"]
+                _handle_chat_success(data, message_placeholder)
             else:
                 _handle_chat_error(api_response, message_placeholder)
 
@@ -601,11 +611,11 @@ def page_config():
     # 获取当前配置
     result = call_api(CONFIG_ENDPOINT)
 
-    if not result or result.get("code") != 200:
+    if not result or (result.get("code") != 200 and not result.get("mode")):
         st.error("无法获取配置")
         return
 
-    config = result["data"]
+    config = result if result.get("mode") else result.get("data", {})
 
     # ========== 模型模式切换 ==========
     st.subheader("模型模式")
@@ -720,8 +730,8 @@ def _apply_config(update_data: dict):
     with st.spinner("正在更新配置..."):
         result = call_api(CONFIG_ENDPOINT, method="PUT", data=update_data)
 
-        if result and result.get("code") == 200:
-            st.success(result.get("message", "配置更新成功！"))
+        if result and (result.get("success") or result.get("code") == 200):
+            st.success("配置更新成功！")
         else:
             error_msg = result.get("message", "配置更新失败") if result else "配置更新失败"
             st.error(error_msg)
@@ -746,11 +756,11 @@ def page_stats():
 
     # 获取统计数据（只调用一次API）
     stats_result = call_api(STATS_ENDPOINT)
-    if not stats_result or stats_result.get("code") != 200:
+    if not stats_result or (stats_result.get("code") != 200 and not stats_result.get("total_documents")):
         st.error("无法获取统计数据")
         return
 
-    stats = stats_result["data"]
+    stats = stats_result if stats_result.get("total_documents") is not None else stats_result.get("data", {})
 
     # 指标卡片（5列布局）
     col1, col2, col3, col4, col5 = st.columns(5)
@@ -835,10 +845,9 @@ def page_eval():
     st.subheader("历史评估记录")
 
     history = call_api(f"{EVAL_ENDPOINT}/metrics")
-    if history and history.get("code") == 200:
-        records = history["data"]
-        st.write(f"**评估时间**: {records.get('timestamp', 'N/A')}")
-        st.write(f"**问答统计**: {records.get('qa_stats', {})}")
+    if history and (history.get("total_documents") is not None or history.get("code") == 200):
+        records = history if history.get("total_documents") is not None else history.get("data", {})
+        st.write(f"**问答统计**: {records}")
     else:
         st.info("暂无历史评估记录")
 

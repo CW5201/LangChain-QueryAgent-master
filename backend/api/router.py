@@ -197,4 +197,4 @@ async def get_stats():
 @router.get("/health")
 async def health_check():
     """健康检查"""
-    return {"status": "ok", "version": "1.0.0", "timestamp": datetime.now().isoformat()}
+    return {"code": 200, "status": "ok", "version": "1.0.0", "timestamp": datetime.now().isoformat()}

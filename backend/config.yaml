@@ -4,7 +4,8 @@ model:
   mode: local
   cloud:
     model_name: qwen-turbo
-    api_key: ""
+    api_key: "sk-df3c651ad3f64d2691449a4148ebfa74"
+    base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
   local:
     base_url: http://localhost:11434
     model_name: qwen2.5:7b
