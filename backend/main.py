@@ -1,6 +1,4 @@
-"""
-SmartKB 入口文件
-"""
+# FastAPI入口文件
 
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
@@ -11,24 +9,17 @@ from backend.api.router import router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """应用生命周期管理"""
-    print("SmartKB 启动中...")
+    print("SmartKB 启动...")
     yield
     print("SmartKB 关闭")
 
 
-app = FastAPI(
-    title="SmartKB",
-    description="AI知识库问答系统",
-    version="1.0.0",
-    lifespan=lifespan
-)
+app = FastAPI(title="SmartKB", version="1.0.0", lifespan=lifespan)
 
-# 跨域设置
+# 允许跨域（前端能访问后端）
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )

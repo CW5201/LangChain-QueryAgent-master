@@ -1,2 +1,0 @@
-- [记忆存储位置说明](memory/memory-storage.md) — 持久化记忆目录改为项目下的 memory/
-- [审批语言偏好](memory/审批语言.md) — 所有审批提示和权限请求使用中文

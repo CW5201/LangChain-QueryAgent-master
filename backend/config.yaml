@@ -1,13 +1,10 @@
 # SmartKB 配置文件
-# 修改后可通过 PUT /api/config 热更新，无需重启服务
 
 model:
   mode: local
   cloud:
-    provider: dashscope
     model_name: qwen-turbo
-    api_key: ''
-    base_url: ''
+    api_key: ""
   local:
     base_url: http://localhost:11434
     model_name: qwen2.5:7b
@@ -16,40 +13,11 @@ rag:
   chunk_size: 500
   chunk_overlap: 100
   top_k: 3
-  embedding:
-    model: text-embedding-v1
-    dimension: 1536
 
 agent:
   max_tool_calls: 5
-  max_iterations: 10
-  verbose: true
-
-document:
-  allowed_formats:
-    - pdf
-    - txt
-    - md
-  max_file_size_mb: 10
-
-conversation:
-  max_history: 10
-
-database:
-  sqlite_path: data/smartkb.db
-  chroma_path: data/chroma_db
-
-server:
-  host: 0.0.0.0
-  port: 8000
-  workers: 1
 
 alert:
-  feishu_webhook: ''
-  dingtalk_webhook: ''
-  wechat_webhook: ''
-
-logging:
-  level: INFO
-  format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-  max_days: 7
+  feishu_webhook: ""
+  dingtalk_webhook: ""
+  wechat_webhook: ""
