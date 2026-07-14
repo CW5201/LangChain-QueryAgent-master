@@ -1,57 +1,55 @@
-agent:
-  max_iterations: 10
-  verbose: true
-conversation:
-  max_history: 10
-database:
-  chroma_path: data/chroma_db
-  sqlite_path: data/smartkb.db
-document:
-  allowed_formats:
-  - pdf
-  - txt
-  - md
-  max_file_size_mb: 10
-llm:
-  max_tokens: 2048
-  streaming: true
-  temperature: 0.7
-  top_p: 0.9
-logging:
-  format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-  level: INFO
-  max_days: 7
+# SmartKB 配置文件
+# 修改后可通过 PUT /api/config 热更新，无需重启服务
+
 model:
+  mode: local
   cloud:
-    api_key: ''
-    model_name: qwen-turbo
     provider: dashscope
+    model_name: qwen-turbo
+    api_key: ''
+    base_url: ''
   local:
     base_url: http://localhost:11434
     model_name: qwen2.5:7b
-  mode: cloud
+
 rag:
-  chunk_overlap: 100
   chunk_size: 500
+  chunk_overlap: 100
+  top_k: 3
   embedding:
-    dimension: 1536
     model: text-embedding-v1
-  top_k: 10
+    dimension: 1536
+
+agent:
+  max_tool_calls: 5
+  max_iterations: 10
+  verbose: true
+
+document:
+  allowed_formats:
+    - pdf
+    - txt
+    - md
+  max_file_size_mb: 10
+
+conversation:
+  max_history: 10
+
+database:
+  sqlite_path: data/smartkb.db
+  chroma_path: data/chroma_db
+
 server:
   host: 0.0.0.0
   port: 8000
   workers: 1
-agent:
-  knowledge_keywords:
-    - 政策
-    - 制度
-    - 规定
-    - 流程
-    - 文档
-    - 手册
-    - 指南
-    - 报销
-    - 审批
-    - 请假
-    - 入职
-    - 离职
+
+alert:
+  feishu_webhook: ''
+  dingtalk_webhook: ''
+  wechat_webhook: ''
+
+logging:
+  level: INFO
+  format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  max_days: 7
